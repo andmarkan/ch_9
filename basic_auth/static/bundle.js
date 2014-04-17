@@ -1,5 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var Backbone = require('backbone');
+var Genre = require('models/genre');
+
+var Genres = Backbone.Collection.extend({
+
+  url: '/api/genres',
+
+  model: Genre
+
+
+});
+module.exports = Genres;
+
+},{"backbone":39,"models/genre":10}],2:[function(require,module,exports){
+var Backbone = require('backbone');
 var Movie = require('models/movie');
 var _ = require('underscore');
 
@@ -43,7 +57,7 @@ var Movies = Backbone.Collection.extend({
 })
 module.exports = Movies;
 
-},{"backbone":36,"models/movie":7,"underscore":40}],2:[function(require,module,exports){
+},{"backbone":39,"models/movie":11,"underscore":43}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery-untouched');
 Backbone.$ = $;
@@ -60,13 +74,23 @@ $(document).ready(function() {
 });
 
 
-},{"backbone":36,"jquery-untouched":38,"routers/movies":9}],3:[function(require,module,exports){
+},{"backbone":39,"jquery-untouched":41,"routers/movies":13}],4:[function(require,module,exports){
+var Backbone = require('backbone');
+
+var Genre = Backbone.Model.extend({
+
+
+});
+module.exports = Genre;
+
+},{"backbone":39}],5:[function(require,module,exports){
 var Backbone = require("backbone");
 
 var Movie = Backbone.Model.extend({
   defaults: {
     title: "default",
     year: 0,
+    rating: 0,
     description: "empty",
     selected: false
   },
@@ -92,7 +116,7 @@ var Movie = Backbone.Model.extend({
 });
 module.exports = Movie;
 
-},{"backbone":36}],4:[function(require,module,exports){
+},{"backbone":39}],6:[function(require,module,exports){
 var Backbone = require("backbone");
 var Vote = Backbone.Model.extend({
 
@@ -105,7 +129,7 @@ var Vote = Backbone.Model.extend({
 });
 module.exports = Vote;
 
-},{"backbone":36}],5:[function(require,module,exports){
+},{"backbone":39}],7:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -117,21 +141,24 @@ var Backbone = require('backbone');
   }
   module.exports = Monitor;
 
-},{"backbone":36,"underscore":40}],6:[function(require,module,exports){
+},{"backbone":39,"underscore":43}],8:[function(require,module,exports){
 module.exports=require(1)
-},{"backbone":36,"models/movie":7,"underscore":40}],7:[function(require,module,exports){
-module.exports=require(3)
-},{"backbone":36}],8:[function(require,module,exports){
+},{"backbone":39,"models/genre":10}],9:[function(require,module,exports){
+module.exports=require(2)
+},{"backbone":39,"models/movie":11,"underscore":43}],10:[function(require,module,exports){
 module.exports=require(4)
-},{"backbone":36}],9:[function(require,module,exports){
+},{"backbone":39}],11:[function(require,module,exports){
+module.exports=require(5)
+},{"backbone":39}],12:[function(require,module,exports){
+module.exports=require(6)
+},{"backbone":39}],13:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 
 // data
-var Movie = require('models/movie');
 var Movies = require('collections/movies');
 var movies = new Movies();
-var deferred = 1; // movies.fetch();
+var deferred = movies.fetch();
 
 // views
 var Layout = require('views/layout');
@@ -171,15 +198,15 @@ var MoviesRouter = Backbone.Router.extend({
       el: '#movies', router: this
     });
     var that = this;
-    // deferred.done(function(results) {
-    //   that.movies.reset(results);
-    //   that.layout.render();
-    // });
+    deferred.done(function(results) {
+      that.movies.reset(results);
+      that.layout.render();
+    });
   }
 });
 module.exports = MoviesRouter;
 
-},{"backbone":36,"collections/movies":6,"models/movie":7,"underscore":40,"views/layout":15}],10:[function(require,module,exports){
+},{"backbone":39,"collections/movies":9,"underscore":43,"views/layout":19}],14:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var ChoseView = Backbone.View.extend({
@@ -195,11 +222,10 @@ var ChoseView = Backbone.View.extend({
 });
 module.exports = ChoseView;
 
-},{"backbone":36}],11:[function(require,module,exports){
+},{"backbone":39}],15:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = Backbone.$;
-Backbone.XView = require('backbone.xview');
 
 var ControlsView = Backbone.View.extend({
 
@@ -254,27 +280,28 @@ var ControlsView = Backbone.View.extend({
 });
 module.exports = ControlsView;
 
-},{"backbone":36,"backbone.xview":35,"underscore":40}],12:[function(require,module,exports){
-  var Backbone = require('backbone');
-  var _ = require('underscore');
-  var moment = require('moment');
-  
-  var DetailsView = Backbone.View.extend({
-    el: '#details',
+},{"backbone":39,"underscore":43}],16:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
+var moment = require('moment');
 
-    template: _.template('<h1><%= showtimeFormatted %> - <%= title %> </h1>\
-                         <br><br> <%= description %>'),
+var DetailsView = Backbone.View.extend({
+  el: '#details',
 
-    render: function() {
-      var showtime = moment(showtime).format("DD-MMMM HH:MM");
-      var data = _.extend(this.model.toJSON(), {showtimeFormatted: showtime});
-      this.$el.html(this.template(data));
-      return this;
-    }
-  });
-  module.exports = DetailsView;
+  template: _.template('<h1><%= showtimeFormatted %> - <%= title %></h1>\
+                        <br>rating: <%= rating %> \
+                        <br> <%= description %>'),
 
-},{"backbone":36,"moment":39,"underscore":40}],13:[function(require,module,exports){
+  render: function() {
+    var showtime = moment(showtime).format("DD-MMMM HH:MM");
+    var data = _.extend(this.model.toJSON(), {showtimeFormatted: showtime});
+    this.$el.html(this.template(data));
+    return this;
+  }
+});
+module.exports = DetailsView;
+
+},{"backbone":39,"moment":42,"underscore":43}],17:[function(require,module,exports){
 var Backbone = require('backbone');
 
 // The UI for selecting a Movie Category
@@ -283,7 +310,7 @@ var GenresView = Backbone.View.extend({
 });
 module.exports = GenresView;
 
-},{"backbone":36}],14:[function(require,module,exports){
+},{"backbone":39}],18:[function(require,module,exports){
 
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -305,7 +332,7 @@ var Info = Backbone.View.extend({
 });
 module.exports = Info;
 
-},{"backbone":36,"underscore":40}],15:[function(require,module,exports){
+},{"backbone":39,"underscore":43}],19:[function(require,module,exports){
 var Backbone = require('backbone');
 Backbone.Obscura = require('backbone.obscura');
 
@@ -397,7 +424,7 @@ Layout.getInstance = function(options) {
 }
 module.exports = Layout;
 
-},{"backbone":36,"backbone.obscura":27,"underscore":40,"views/chose":10,"views/controls":11,"views/details":12,"views/info":14,"views/moviesList":17}],16:[function(require,module,exports){
+},{"backbone":39,"backbone.obscura":31,"underscore":43,"views/chose":14,"views/controls":15,"views/details":16,"views/info":18,"views/moviesList":21}],20:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery-untouched');
 var _ = require('underscore');
@@ -405,7 +432,9 @@ var _ = require('underscore');
 var MovieView = Backbone.View.extend({
   tagName: 'article',
   className: 'movie',
-  template: '<h1><a href="/movies/<%= id %>"><%= title %></a><hr></h1>',
+  template: '<h1><a href="/movies/<%= id %>">\
+                 <%= title %></a></h1>\
+                 <hr>',
 
   events: {
     'click': 'selectMovie'
@@ -434,7 +463,7 @@ var MovieView = Backbone.View.extend({
 });
 module.exports = MovieView;
 
-},{"backbone":36,"jquery-untouched":38,"underscore":40}],17:[function(require,module,exports){
+},{"backbone":39,"jquery-untouched":41,"underscore":43}],21:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 
@@ -460,25 +489,25 @@ var MoviesList = Backbone.View.extend({
 
 module.exports = MoviesList;
 
-},{"backbone":36,"underscore":40,"views/movie":16}],18:[function(require,module,exports){
-module.exports=require(9)
-},{"backbone":36,"collections/movies":6,"models/movie":7,"underscore":40,"views/layout":15}],19:[function(require,module,exports){
-module.exports=require(10)
-},{"backbone":36}],20:[function(require,module,exports){
-module.exports=require(11)
-},{"backbone":36,"backbone.xview":35,"underscore":40}],21:[function(require,module,exports){
-module.exports=require(12)
-},{"backbone":36,"moment":39,"underscore":40}],22:[function(require,module,exports){
+},{"backbone":39,"underscore":43,"views/movie":20}],22:[function(require,module,exports){
 module.exports=require(13)
-},{"backbone":36}],23:[function(require,module,exports){
+},{"backbone":39,"collections/movies":9,"underscore":43,"views/layout":19}],23:[function(require,module,exports){
 module.exports=require(14)
-},{"backbone":36,"underscore":40}],24:[function(require,module,exports){
+},{"backbone":39}],24:[function(require,module,exports){
 module.exports=require(15)
-},{"backbone":36,"backbone.obscura":27,"underscore":40,"views/chose":10,"views/controls":11,"views/details":12,"views/info":14,"views/moviesList":17}],25:[function(require,module,exports){
+},{"backbone":39,"underscore":43}],25:[function(require,module,exports){
 module.exports=require(16)
-},{"backbone":36,"jquery-untouched":38,"underscore":40}],26:[function(require,module,exports){
+},{"backbone":39,"moment":42,"underscore":43}],26:[function(require,module,exports){
 module.exports=require(17)
-},{"backbone":36,"underscore":40,"views/movie":16}],27:[function(require,module,exports){
+},{"backbone":39}],27:[function(require,module,exports){
+module.exports=require(18)
+},{"backbone":39,"underscore":43}],28:[function(require,module,exports){
+module.exports=require(19)
+},{"backbone":39,"backbone.obscura":31,"underscore":43,"views/chose":14,"views/controls":15,"views/details":16,"views/info":18,"views/moviesList":21}],29:[function(require,module,exports){
+module.exports=require(20)
+},{"backbone":39,"jquery-untouched":41,"underscore":43}],30:[function(require,module,exports){
+module.exports=require(21)
+},{"backbone":39,"underscore":43,"views/movie":20}],31:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -601,7 +630,7 @@ Obscura.PaginatedCollection = PaginatedCollection;
 module.exports = Obscura;
 
 
-},{"./src/proxy-events.js":34,"backbone":36,"backbone-collection-proxy":28,"backbone-filtered-collection":29,"backbone-paginated-collection":31,"backbone-sorted-collection":32,"underscore":40}],28:[function(require,module,exports){
+},{"./src/proxy-events.js":38,"backbone":39,"backbone-collection-proxy":32,"backbone-filtered-collection":33,"backbone-paginated-collection":35,"backbone-sorted-collection":36,"underscore":43}],32:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -674,7 +703,7 @@ function proxyCollection(from, target) {
 module.exports = proxyCollection;
 
 
-},{"backbone":36,"underscore":40}],29:[function(require,module,exports){
+},{"backbone":39,"underscore":43}],33:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var proxyCollection = require('backbone-collection-proxy');
@@ -904,7 +933,7 @@ _.extend(Filtered.prototype, methods, Backbone.Events);
 module.exports = Filtered;
 
 
-},{"./src/create-filter.js":30,"backbone":36,"backbone-collection-proxy":28,"underscore":40}],30:[function(require,module,exports){
+},{"./src/create-filter.js":34,"backbone":39,"backbone-collection-proxy":32,"underscore":43}],34:[function(require,module,exports){
 var _ = require('underscore');
 
 // Converts a key and value into a function that accepts a model
@@ -987,7 +1016,7 @@ function createFilter(filter, keys) {
 module.exports = createFilter;
 
 
-},{"underscore":40}],31:[function(require,module,exports){
+},{"underscore":43}],35:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -1201,7 +1230,7 @@ _.extend(Paginated.prototype, methods, Backbone.Events);
 module.exports =  Paginated;
 
 
-},{"backbone":36,"backbone-collection-proxy":28,"underscore":40}],32:[function(require,module,exports){
+},{"backbone":39,"backbone-collection-proxy":32,"underscore":43}],36:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone =require('backbone');
@@ -1319,7 +1348,7 @@ _.extend(Sorted.prototype, methods, Backbone.Events);
 module.exports = Sorted;
 
 
-},{"./src/reverse-sorted-index.js":33,"backbone":36,"backbone-collection-proxy":28,"underscore":40}],33:[function(require,module,exports){
+},{"./src/reverse-sorted-index.js":37,"backbone":39,"backbone-collection-proxy":32,"underscore":43}],37:[function(require,module,exports){
 
 var _ = require('underscore');
 
@@ -1346,7 +1375,7 @@ function reverseSortedIndex(array, obj, iterator, context) {
 
 module.exports = reverseSortedIndex;
 
-},{"underscore":40}],34:[function(require,module,exports){
+},{"underscore":43}],38:[function(require,module,exports){
 var _ = require('underscore');
 
 function proxyEvents(from, eventNames) {
@@ -1361,417 +1390,7 @@ function proxyEvents(from, eventNames) {
 
 module.exports = proxyEvents;
 
-},{"underscore":40}],35:[function(require,module,exports){
-/**
- * XView
- *
- * Easily create hierarchical structures
- * An XView can make multiple child views, which can have multiple child views.
- * When removing a parent view, children are removed automatically.
- *
- * Easy templating
- * Add a template string to the template property, and optionally add unwrap: true 
- * to avoid having Backbone wrap it in an extra tag. This can make templating 
- * and styling easier.
- */
-
-
-/**
- * Factory
- */
-;(function(factory) {
-  // AMD
-  if (typeof define === 'function' && define.amd) {      
-    define(['underscore', 'backbone'], factory);
-  }
-
-  //CommonJS
-  else if (typeof exports !== 'undefined') {
-    factory(require('underscore'), require('backbone'));
-  }
-
-  //Globals
-  else {
-    factory(_, Backbone);
-  }
-}(function(_, Backbone) {
-
-
-
-  /**
-   * Main view
-   */
-  var XView = Backbone.View.extend({
-    //Helpers functions (and properties) that are sent to the template on render
-    renderHelpers: {},
-
-    /**
-     * Constructor
-     *
-     * @param {Object} [options]
-     * @param {View} [options.parent]       Parent view (Passed automatically when using XView#addView)
-     * @param {Function} [options.template] Compiled template, e.g. the result of _.template('<div></div>')
-     * @param {Boolean} [options.unwrap]    Whether to use only the template, so that there isn't an extra tag around the template contents. NOTE: If using unwrap, there must be one single parent element in the template. 
-     */
-    constructor: function(options) {
-      options = options || {};
-
-      this.parent = options.parent;
-      this.children = {};
-
-      if (options.template) this.template = options.template;
-      if (options.unwrap) this.unwrap = options.unwrap;
-
-      this.rendered = false;
-
-      Backbone.View.prototype.constructor.call(this, options);
-    },
-
-    /**
-     * Returns the data to be sent to the template.
-     * Default implementation is to return the model JSON object,
-     * but this method can be overridden to return any other data
-     *
-     * This can also be overridden with a simple object rather than function.
-     * 
-     * @return {Object}     The data to send to the template
-     */
-    templateData: function() {
-      return this.model ? this.model.toJSON() : {};
-    },
-
-    /**
-     * Adds a child view.
-     * If a selector is specified, the view will be appended to that part of the template.
-     *
-     * @param {String} [selector]
-     * @param {Object} [options]
-     * @param {Mixed} [options.id]    For fine-grained control if you need to access views after being added. Not necessary in most cases.
-     * @param {View} view
-     * @return {View}
-     */
-    addView: function(selector, options, view) {
-      //Normalise arguments
-      if (arguments.length == 2) { //selector, view
-        view = options;
-        options = {};
-      } else if (arguments.length == 1) { //view
-        view = selector;
-        options = {};
-        selector = null;
-      }
-
-      //Generate an ID if not given
-      var id = options.id || _.uniqueId();
-
-      //Add to the list of children
-      var child = this.children[id] = {
-        selector: selector,
-        view: view
-      };
-
-      //If this view is already rendered, add the child automatically
-      if (this.rendered) {
-        this.renderView(id);
-      }
-
-      return view;
-    },
-
-    /**
-     * Get a child view by ID
-     *
-     * @param {Mixed} id      The child view ID
-     *
-     * @return {View|Null}
-     */
-    getView: function(id) {
-      var child = this.children[id];
-      
-      return child ? child.view : null;
-    },
-
-    /**
-     * Renders the main element with the template.
-     *
-     * If using a template and the 'unwrap' property is true then the template HTML will not be wrapped
-     * in an extra tag. This can make editing and styling templates easier.
-     * 
-     * @return {View}     Returns self
-     */
-    render: function() {
-      if (this.template) {
-        var html = '';
-
-        //Get data for template
-        var data = _.isFunction(this.templateData) ? this.templateData() : this.templateData;
-
-        //Add template helpers
-        _.extend(data, this.renderHelpers);
-
-        //Render HTML
-        html = Backbone.$(this.template(data));
-
-        //If using unwrap and this is an update, only replace the main element contents
-        //This ensures the view that's actually in the DOM is updated
-        if (this.unwrap) {
-          if (!this.rendered) {
-            this.setElement(html);
-          } else {
-            this.$el.html(html.html());
-            this.delegateEvents();
-          }
-        } else {
-          this.$el.html(html);
-        }
-      }
-
-      this.renderViews();
-
-      if (this.onRender) this.onRender();
-
-      this.rendered = true;
-
-      return this;
-    },
-
-    /**
-     * Render all child views
-     */
-    renderViews: function() {
-      var self = this,
-          ids = _.keys(this.children);
-
-      _.each(ids, _.bind(self.renderView, this));
-    },
-
-    /**
-     * Renders a child view and adds it to it's locations in the parent element
-     *
-     * @param {Mixed} id    The child view ID
-     */
-    renderView: function(id) {
-      var child = this.children[id];
-
-      var selector = child.selector,
-          view = child.view,
-          $el = null;
-
-      view.render();
-
-      //Decide where the child view is going
-      if (selector) {
-        $el = this.$el.find(selector);
-      } else {
-        $el = this.$el;
-      }
-
-      $el.append(view.el);
-    },
-
-    /**
-     * Close and remove all child views
-     */
-    removeViews: function() {
-      var self = this,
-          ids = _.keys(this.children);
-
-      _.each(ids, _.bind(self.removeView, this));
-    },
-
-    /**
-     * Close and remove a child view
-     *
-     * @param {Mixed} id    Child view ID
-     */
-    removeView: function(id) {
-      var children = this.children,
-          child = children[id];
-
-      if (!child) return;
-
-      child.view.remove();
-
-      delete children[id];
-    },
-
-    /**
-     * Closes child views then this one, removes event listeners etc.
-     */
-    remove: function() {
-      this.removeViews();
-
-      Backbone.View.prototype.remove.call(this);
-    }
-  });
-
-
-  /**
-   * CollectionView
-   * Renders a list of ItemViews representing a collection
-   */
-  var CollectionView = XView.extend({
-    tagName: 'ul',
-
-    //Selector string for where items will be inserted. If not set, will default to the root element
-    listSelector: null,
-
-    //Selector string for content to show if there are no items
-    fallbackSelector: null,
-
-    //Selector string for content to show if there are no items
-    loadingSelector: null,
-
-    /**
-     * Constructor
-     *
-     * @param {Object} options
-     * @param {Collection} options.collection   Collection to render
-     * @param {XView} options.itemView          Constructor (not instance) for an item view
-     */
-    constructor: function(options) {
-      XView.prototype.constructor.call(this, options);
-
-      options = options || {};
-
-      if (options.collection) this.collection = options.collection;
-      if (!this.collection) throw new Error('collection is required');
-
-      if (options.itemView) this.itemView = options.itemView;
-      if (!this.itemView) throw new Error('itemView is required');
-
-      this.listenTo(this.collection, 'add', this.addItem);
-      this.listenTo(this.collection, 'remove', this.removeItem);
-      this.listenTo(this.collection, 'reset', this.resetItems);
-      this.listenTo(this.collection, 'request', this.onRequest);
-      this.listenTo(this.collection, 'sync', this.onSync);
-
-      //Render items if already in the collection
-      if (this.collection.length) this.resetItems();
-    },
-
-    render: function() {
-      XView.prototype.render.call(this);
-
-      //Show loading content if loading began before view was rendered
-      if (this.loadingSelector) {
-        var $loading = this.$(this.loadingSelector);
-
-        if (this.isLoading) {
-          $loading.show();
-        } else {
-          $loading.hide();
-        }
-      }
-
-      if (this.fallbackSelector) {
-        var $fallback = this.$(this.fallbackSelector);
-
-        $fallback.hide();
-      }
-
-      return this;
-    },
-
-    /**
-     * @param {Model} model
-     */
-    addItem: function(model) {
-      var view = new this.itemView({
-        model: model,
-        listView: this, //TODO: remove listView in favour of 'parent'?
-        parent: this
-      });
-
-      this.addView(this.listSelector || null, { id: model.cid }, view);
-    },
-
-    /**
-     * @param {Model} model
-     */
-    removeItem: function(model) {
-      this.removeView(model.cid);
-    },
-
-    /**
-     * Removes existing item views and adds the current collection contents
-     */
-    resetItems: function() {
-      this.removeViews();
-
-      this.collection.each(_.bind(this.addItem, this));
-
-      //Show fallback if there are no items
-      if (this.fallbackSelector && !this.collection.length) {
-        this.$(this.fallbackSelector).show();
-      }
-    },
-
-    /**
-     * Get the item container (if rendered). Uses the this.listSelector selector if available;
-     * otherwise the main element is returned
-     *
-     * @return {jQuery}
-     */
-    getListEl: function() {
-      if (!this.rendered) throw new Error('View has not yet been rendered');
-
-      var $el;
-
-      if (this.listSelector) {
-        $el = this.$(this.listSelector);
-      } else {
-        $el = this.$el;
-      }
-
-      return $el;
-    },
-
-    /**
-     * Callback for when a request has started, i.e. collection is in loading state
-     */
-    onRequest: function() {
-      this.isLoading = true;
-
-      //Show loading if there are no items
-      if (this.loadingSelector && !this.collection.length) {
-        this.$(this.loadingSelector).show();
-      }
-    },
-
-    /**
-     * Callback for when a request has ended, i.e. collection is not in loading state
-     */
-    onSync: function() {
-      //Hide loading
-      this.isLoading = false;
-      if (this.loadingSelector) {
-        this.$(this.loadingSelector).hide();
-      }
-
-      //Show fallback if there are no items
-      if (this.fallbackSelector && !this.collection.length) {
-        this.$(this.fallbackSelector).show();
-      }
-    }
-  });
-
-
-  /**
-   * Exports
-   */
-  XView.Collection = CollectionView;
-
-  Backbone.XView = XView;
-
-  //For use in NodeJS
-  if (typeof module != 'undefined') module.exports = XView;
-  
-  return Backbone.XView;
-
-}));
-
-},{"backbone":36,"underscore":40}],36:[function(require,module,exports){
+},{"underscore":43}],39:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3381,7 +3000,7 @@ module.exports = proxyEvents;
 
 }));
 
-},{"underscore":37}],37:[function(require,module,exports){
+},{"underscore":40}],40:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -4726,7 +4345,7 @@ module.exports = proxyEvents;
   }
 }).call(this);
 
-},{}],38:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v1.10.2
  * http://jquery.com/
@@ -14517,7 +14136,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 })( window );
 
-},{}],39:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -16919,6 +16538,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     }
 }).call(this);
 
-},{}],40:[function(require,module,exports){
-module.exports=require(37)
-},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]);
+},{}],43:[function(require,module,exports){
+module.exports=require(40)
+},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]);

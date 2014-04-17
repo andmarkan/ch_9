@@ -4,6 +4,8 @@ var fileName = "./movies.json";
 var sha1 = require('sha1');
 var _ = require('underscore');
 
+var getCookies = require('./lib/getCookies');
+
 // Next, we require the Promise library
 var Promise = require('bluebird');
 
@@ -22,6 +24,8 @@ var Movies = fs.readFileAsync(fileName, "utf8")
     return Promise.resolve(movies);
   });
 
+var Users = [];
+
 
 function _mapAttributes(movie) {
   return {
@@ -29,6 +33,11 @@ function _mapAttributes(movie) {
     title: movie.title,
     _key: sha1(movie.title),
   };
+};
+
+
+function _mapGenres(movie) { 
+  return movie.genres 
 };
 
 function _mapAllAttributes(movie) {
@@ -50,10 +59,18 @@ var MoviesReader = {
   allMovies: function() {
     return Movies
      .map(_mapAttributes)
-     .catch(function(err) {
-       console.log(err);
+  },
+
+  allGenres: function() {
+    return Movies
+     .map(_mapGenres)
+     .then(function(genres) {
+       return _.chain(genres)
+        .flatten()
+        .uniq()
+        .value();
      });
- },
+  },
 
  showMovie: function(key) {
    return Movies.then(function(movies) {
@@ -112,8 +129,44 @@ var MoviesReader = {
 
  updateScore: function(key, score) {
    console.log("... save score for:  ", key);
+ },
+
+ createUser: function(raw) {
+   var userId = Users.length + 1;
+   var newUser = {
+       id: userId,
+       username: raw.username,
+       password: raw.password,
+       email: raw.email
+     };
+   Users.push(newUser);
+   return Promise.resolve(_.pick(newUser, 'username', 'id'));
+ },
+
+ checkAuth: function(req) {
+   var cookies = getCookies(req);
+ 
+   var activeUser = _.findWhere(Users, { token: cookies.session });
+   if (!activeUser) {
+       throw "No Session"
+   }
+   return Promise.resolve(_.pick(activeUser, 'username', 'id'));
+ },
+
+ authUser: function(req) {
+
+   var activeUser = _.findWhere(Users, { username: req.query.username });
+
+   if (activeUser.id !== null && raw.password === activeUser.password) {
+     var token = sha1(_.now().toString());
+     activeUser.auth = token;
+     return Promise.resolve(activeUser);
+   } else {
+     return Promise.RejectionError('username not found');
+   }
  }
 }
+
 
 // Last, we export the MoviesReader as module
 module.exports = MoviesReader;
