@@ -10,6 +10,7 @@ var DetailsView = require('views/details');
 var ChoseView = require('views/chose');
 var Controls = require('views/controls');
 var Info = require('views/info');
+var Navbar = require('views/navbar');
 
 var Layout = Backbone.View.extend({
 
@@ -32,6 +33,8 @@ var Layout = Backbone.View.extend({
                      Action \
                    </input> \
                </nav> \
+               <nav id="session"> \
+               </nav>  \
                <span id="info">  \
                </span>               \
              </header>            \
@@ -45,6 +48,7 @@ var Layout = Backbone.View.extend({
       this.currentDetails.setElement(this.$('#details')).render();
       this.overview.setElement(this.$('#overview')).render();
       this.controls.setElement(this.$('#controls')).render();
+      this.navbar.setElement(this.$('#session')).render();
       this.info.setElement(this.$('#info')).render();
 
       return this;
@@ -71,6 +75,7 @@ var Layout = Backbone.View.extend({
         router: options.router
       });
       this.controls = new Controls({ proxy: this.proxy });
+      this.navbar = new Navbar();
       this.info = new Info({proxy: this.proxy });
     }
 
