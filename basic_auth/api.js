@@ -45,8 +45,8 @@ server.get('/api/genres', function (req, res, next) {
   .catch(function(err) { res.send(500, err) });
 });
 
-server.post('/auth/create_user', function(req, res, next) {
-  DS.createUser(JSON.parse(req.body))
+server.post('/api/auth/create_user', function(req, res, next) {
+  DS.createUser(req.body)
     .then(function(user) {
        res.send({id: user.id, username: user.username});
      })
@@ -55,7 +55,7 @@ server.post('/auth/create_user', function(req, res, next) {
   });
 });
 
-server.get('/auth/session', function(req, res, next) {
+server.get('/api/auth/session', function(req, res, next) {
 
   DS.checkLogin(req)
     .then(function(user) {
@@ -71,7 +71,7 @@ server.get('/auth/session', function(req, res, next) {
 });
 
 
-server.post('/auth/session', function(req, res, next) {
+server.post('/api/auth/session', function(req, res, next) {
 
   if (!req.query.username || !req.query.password) {
     res.send({status: 'err', error: 'Username and password are two required fields.'});
