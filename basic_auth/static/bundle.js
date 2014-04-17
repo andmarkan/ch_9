@@ -12,7 +12,7 @@ var Genres = Backbone.Collection.extend({
 });
 module.exports = Genres;
 
-},{"backbone":47,"models/genre":10}],2:[function(require,module,exports){
+},{"backbone":49,"models/genre":10}],2:[function(require,module,exports){
 var Backbone = require('backbone');
 var Movie = require('models/movie');
 var _ = require('underscore');
@@ -57,7 +57,7 @@ var Movies = Backbone.Collection.extend({
 })
 module.exports = Movies;
 
-},{"backbone":47,"models/movie":11,"underscore":67}],3:[function(require,module,exports){
+},{"backbone":49,"models/movie":11,"underscore":69}],3:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery-untouched');
 Backbone.$ = $;
@@ -74,7 +74,7 @@ $(document).ready(function() {
 });
 
 
-},{"backbone":47,"jquery-untouched":65,"routers/movies":13}],4:[function(require,module,exports){
+},{"backbone":49,"jquery-untouched":67,"routers/movies":13}],4:[function(require,module,exports){
 var Backbone = require('backbone');
 
 var Genre = Backbone.Model.extend({
@@ -83,7 +83,7 @@ var Genre = Backbone.Model.extend({
 });
 module.exports = Genre;
 
-},{"backbone":47}],5:[function(require,module,exports){
+},{"backbone":49}],5:[function(require,module,exports){
 var Backbone = require("backbone");
 
 var Movie = Backbone.Model.extend({
@@ -116,7 +116,7 @@ var Movie = Backbone.Model.extend({
 });
 module.exports = Movie;
 
-},{"backbone":47}],6:[function(require,module,exports){
+},{"backbone":49}],6:[function(require,module,exports){
 var Backbone = require("backbone");
 var Vote = Backbone.Model.extend({
 
@@ -129,7 +129,7 @@ var Vote = Backbone.Model.extend({
 });
 module.exports = Vote;
 
-},{"backbone":47}],7:[function(require,module,exports){
+},{"backbone":49}],7:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 
@@ -141,17 +141,17 @@ var Backbone = require('backbone');
   }
   module.exports = Monitor;
 
-},{"backbone":47,"underscore":67}],8:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],8:[function(require,module,exports){
 module.exports=require(1)
-},{"backbone":47,"models/genre":10}],9:[function(require,module,exports){
+},{"backbone":49,"models/genre":10}],9:[function(require,module,exports){
 module.exports=require(2)
-},{"backbone":47,"models/movie":11,"underscore":67}],10:[function(require,module,exports){
+},{"backbone":49,"models/movie":11,"underscore":69}],10:[function(require,module,exports){
 module.exports=require(4)
-},{"backbone":47}],11:[function(require,module,exports){
+},{"backbone":49}],11:[function(require,module,exports){
 module.exports=require(5)
-},{"backbone":47}],12:[function(require,module,exports){
+},{"backbone":49}],12:[function(require,module,exports){
 module.exports=require(6)
-},{"backbone":47}],13:[function(require,module,exports){
+},{"backbone":49}],13:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 
@@ -206,7 +206,7 @@ var MoviesRouter = Backbone.Router.extend({
 });
 module.exports = MoviesRouter;
 
-},{"backbone":47,"collections/movies":9,"underscore":67,"views/layout":21}],14:[function(require,module,exports){
+},{"backbone":49,"collections/movies":9,"underscore":69,"views/layout":21}],14:[function(require,module,exports){
 module.exports = function(Handlebars) {
 
 var templates = {};
@@ -217,7 +217,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"overlay\"></div>\n<div class=\"content\">\n   <h1>Register</h1>\n   <form>\n   <fieldset>\n   <legend>Your Name</legend>\n   <label>\n   First:\n   <input type=\"text\" name=\"firstName\" /> </label>\n   <label>\n   Last:\n   <input type=\"text\" name=\"lastName\" /> </label>\n   </fieldset>\n   <fieldset>\n   <legend>Email Address</legend>\n   <label>\n   Email:\n   <input type=\"text\" name=\"email\" /> </label>\n   <br />\n   <label>\n       Email (confirm):\n   <input type=\"text\" name=\"cemail\" /> </label>\n   </fieldset>\n   <fieldset>\n   <legend>Password</legend>\n   <label>\n   Password:\n   <input type=\"password\" name=\"password\" /> </label>\n   <br />\n   <label>\n       Password (confirm):\n   <input type=\"password\" name=\"cpassword\" /> </label>\n   </fieldset>\n</div>\n";
+  return "<div class=\"overlay\"></div>\n<div class=\"content\">\n   <span class=\"close\">close</span>\n   <h1>Register</h1>\n   <form>\n   <fieldset>\n   <legend>Username</legend>\n   <label>\n   <input type=\"text\" name=\"username\" /> </label>\n   </fieldset>\n   <fieldset>\n   <legend>Email Address</legend>\n   <label>\n   Email:\n   <input type=\"text\" name=\"email\" /> </label>\n   </fieldset>\n   <fieldset>\n   <legend>Password</legend>\n   <label>\n   Password:\n   <input type=\"password\" name=\"password\" /> </label>\n   <br />\n   <label>\n       Password (confirm):\n   <input type=\"password\" name=\"cpassword\" /> </label>\n   </fieldset>\n    <input type=\"submit\"></input>\n</div>\n";
   });
 
 templates["login"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -226,7 +226,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"overlay\"></div>\n  <div class=\"content\">\n  <h2>Login</h2>\n  <form id=\"login\">\n    <label for=\"username\">\n      Username:\n    </label>\n    <input name=\"username\" />\n    <br>\n    <label for=\"password\">\n      Password:\n    </label>\n    <input type=\"password\" name=\"password\" />\n    <br>\n    <input type=\"submit\"></input>\n  </form>\n</div>\n\n";
+  return "<div class=\"overlay\"></div>\n  <div class=\"content\">\n  <span class=\"close\">close</span>\n  <h2>Login</h2>\n  <form id=\"login\">\n    <label for=\"username\">\n      Username:\n    </label>\n    <input name=\"username\" />\n    <br>\n    <label for=\"password\">\n      Password:\n    </label>\n    <input type=\"password\" name=\"password\" />\n    <br>\n    <input type=\"submit\"></input>\n  </form>\n</div>\n\n";
   });
 
 templates["navbar"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -271,7 +271,7 @@ var ChoseView = Backbone.View.extend({
 });
 module.exports = ChoseView;
 
-},{"backbone":47}],16:[function(require,module,exports){
+},{"backbone":49}],16:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = Backbone.$;
@@ -329,7 +329,7 @@ var ControlsView = Backbone.View.extend({
 });
 module.exports = ControlsView;
 
-},{"backbone":47,"underscore":67}],17:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],17:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var moment = require('moment');
@@ -350,7 +350,7 @@ var DetailsView = Backbone.View.extend({
 });
 module.exports = DetailsView;
 
-},{"backbone":47,"moment":66,"underscore":67}],18:[function(require,module,exports){
+},{"backbone":49,"moment":68,"underscore":69}],18:[function(require,module,exports){
 var Backbone = require('backbone');
 
 // The UI for selecting a Movie Category
@@ -359,7 +359,7 @@ var GenresView = Backbone.View.extend({
 });
 module.exports = GenresView;
 
-},{"backbone":47}],19:[function(require,module,exports){
+},{"backbone":49}],19:[function(require,module,exports){
 
 var Backbone = require('backbone');
 var _ = require('underscore');
@@ -381,28 +381,19 @@ var Info = Backbone.View.extend({
 });
 module.exports = Info;
 
-},{"backbone":47,"underscore":67}],20:[function(require,module,exports){
-var Backbone = require('backbone');
-var _ = require('underscore');
-var $ = Backbone.$;
+},{"backbone":49,"underscore":69}],20:[function(require,module,exports){
+var ModalView = require('views/modal');
 var Handlebars = require('handlebars');
 var Templates = require('templates/compiledTemplates')(Handlebars);
 
-var JoinView = Backbone.View.extend({
-
-  className: 'ui-modal',
+var JoinView = ModalView.extend({
 
   template: Templates['join'],
-
-  render: function() {
-    this.$el.html(this.template());
-    return this;
-  }
 
 });
 module.exports = JoinView;
 
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67}],21:[function(require,module,exports){
+},{"handlebars":66,"templates/compiledTemplates":14,"views/modal":23}],21:[function(require,module,exports){
 var Backbone = require('backbone');
 Backbone.Obscura = require('backbone.obscura');
 
@@ -499,29 +490,50 @@ Layout.getInstance = function(options) {
 }
 module.exports = Layout;
 
-},{"backbone":47,"backbone.obscura":39,"underscore":67,"views/chose":15,"views/controls":16,"views/details":17,"views/info":19,"views/moviesList":24,"views/navbar":25}],22:[function(require,module,exports){
-var Backbone = require('backbone');
-var _ = require('underscore');
-var $ = Backbone.$;
+},{"backbone":49,"backbone.obscura":41,"underscore":69,"views/chose":15,"views/controls":16,"views/details":17,"views/info":19,"views/moviesList":25,"views/navbar":26}],22:[function(require,module,exports){
+var ModalView = require('views/modal');
 var Handlebars = require('handlebars');
 var Templates = require('templates/compiledTemplates')(Handlebars);
 
-var LoginView = Backbone.View.extend({
+var LoginView = ModalView.extend({
 
   template: Templates['login'],
-
-  className: 'ui-modal modal',
-
-  render: function() {
-    this.$el.html(this.template());
-    return this;
-  }
 
 });
 module.exports = LoginView;
 
 
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67}],23:[function(require,module,exports){
+},{"handlebars":66,"templates/compiledTemplates":14,"views/modal":23}],23:[function(require,module,exports){
+var Backbone = require('backbone');
+var _ = require('underscore');
+var $ = Backbone.$;
+
+var ModalView = Backbone.View.extend({
+
+  className: 'ui-modal',
+
+  render: function() {
+    this.$el.html(this.template());
+    this.$el.delegate('.close', 'click', this.closeModal);
+    return this;
+  },
+
+  closeModal: function(ev) {
+    if (ev) ev.preventDefault();
+    this.$el.unbind();
+    this.$el.empty();
+    this.$el.remove();
+  },
+
+
+  initialize: function() {
+    _.bindAll(this, 'render', 'closeModal');
+  }
+
+});
+module.exports = ModalView;
+
+},{"backbone":49,"underscore":69}],24:[function(require,module,exports){
 var Backbone = require('backbone');
 var $ = require('jquery-untouched');
 var _ = require('underscore');
@@ -560,7 +572,7 @@ var MovieView = Backbone.View.extend({
 });
 module.exports = MovieView;
 
-},{"backbone":47,"jquery-untouched":65,"underscore":67}],24:[function(require,module,exports){
+},{"backbone":49,"jquery-untouched":67,"underscore":69}],25:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 
@@ -586,7 +598,7 @@ var MoviesList = Backbone.View.extend({
 
 module.exports = MoviesList;
 
-},{"backbone":47,"underscore":67,"views/movie":23}],25:[function(require,module,exports){
+},{"backbone":49,"underscore":69,"views/movie":24}],26:[function(require,module,exports){
 var Backbone = require('backbone');
 var _ = require('underscore');
 var $ = Backbone.$;
@@ -632,33 +644,35 @@ var NavbarView = Backbone.View.extend({
 });
 module.exports = NavbarView;
 
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67,"views/join":20,"views/login":22}],26:[function(require,module,exports){
+},{"backbone":49,"handlebars":66,"templates/compiledTemplates":14,"underscore":69,"views/join":20,"views/login":22}],27:[function(require,module,exports){
 module.exports=require(13)
-},{"backbone":47,"collections/movies":9,"underscore":67,"views/layout":21}],27:[function(require,module,exports){
+},{"backbone":49,"collections/movies":9,"underscore":69,"views/layout":21}],28:[function(require,module,exports){
 module.exports=require(14)
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports=require(15)
-},{"backbone":47}],29:[function(require,module,exports){
+},{"backbone":49}],30:[function(require,module,exports){
 module.exports=require(16)
-},{"backbone":47,"underscore":67}],30:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],31:[function(require,module,exports){
 module.exports=require(17)
-},{"backbone":47,"moment":66,"underscore":67}],31:[function(require,module,exports){
+},{"backbone":49,"moment":68,"underscore":69}],32:[function(require,module,exports){
 module.exports=require(18)
-},{"backbone":47}],32:[function(require,module,exports){
+},{"backbone":49}],33:[function(require,module,exports){
 module.exports=require(19)
-},{"backbone":47,"underscore":67}],33:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],34:[function(require,module,exports){
 module.exports=require(20)
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67}],34:[function(require,module,exports){
+},{"handlebars":66,"templates/compiledTemplates":14,"views/modal":23}],35:[function(require,module,exports){
 module.exports=require(21)
-},{"backbone":47,"backbone.obscura":39,"underscore":67,"views/chose":15,"views/controls":16,"views/details":17,"views/info":19,"views/moviesList":24,"views/navbar":25}],35:[function(require,module,exports){
+},{"backbone":49,"backbone.obscura":41,"underscore":69,"views/chose":15,"views/controls":16,"views/details":17,"views/info":19,"views/moviesList":25,"views/navbar":26}],36:[function(require,module,exports){
 module.exports=require(22)
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67}],36:[function(require,module,exports){
+},{"handlebars":66,"templates/compiledTemplates":14,"views/modal":23}],37:[function(require,module,exports){
 module.exports=require(23)
-},{"backbone":47,"jquery-untouched":65,"underscore":67}],37:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],38:[function(require,module,exports){
 module.exports=require(24)
-},{"backbone":47,"underscore":67,"views/movie":23}],38:[function(require,module,exports){
+},{"backbone":49,"jquery-untouched":67,"underscore":69}],39:[function(require,module,exports){
 module.exports=require(25)
-},{"backbone":47,"handlebars":64,"templates/compiledTemplates":14,"underscore":67,"views/join":20,"views/login":22}],39:[function(require,module,exports){
+},{"backbone":49,"underscore":69,"views/movie":24}],40:[function(require,module,exports){
+module.exports=require(26)
+},{"backbone":49,"handlebars":66,"templates/compiledTemplates":14,"underscore":69,"views/join":20,"views/login":22}],41:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -781,7 +795,7 @@ Obscura.PaginatedCollection = PaginatedCollection;
 module.exports = Obscura;
 
 
-},{"./src/proxy-events.js":46,"backbone":47,"backbone-collection-proxy":40,"backbone-filtered-collection":41,"backbone-paginated-collection":43,"backbone-sorted-collection":44,"underscore":67}],40:[function(require,module,exports){
+},{"./src/proxy-events.js":48,"backbone":49,"backbone-collection-proxy":42,"backbone-filtered-collection":43,"backbone-paginated-collection":45,"backbone-sorted-collection":46,"underscore":69}],42:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -854,7 +868,7 @@ function proxyCollection(from, target) {
 module.exports = proxyCollection;
 
 
-},{"backbone":47,"underscore":67}],41:[function(require,module,exports){
+},{"backbone":49,"underscore":69}],43:[function(require,module,exports){
 var _ = require('underscore');
 var Backbone = require('backbone');
 var proxyCollection = require('backbone-collection-proxy');
@@ -1084,7 +1098,7 @@ _.extend(Filtered.prototype, methods, Backbone.Events);
 module.exports = Filtered;
 
 
-},{"./src/create-filter.js":42,"backbone":47,"backbone-collection-proxy":40,"underscore":67}],42:[function(require,module,exports){
+},{"./src/create-filter.js":44,"backbone":49,"backbone-collection-proxy":42,"underscore":69}],44:[function(require,module,exports){
 var _ = require('underscore');
 
 // Converts a key and value into a function that accepts a model
@@ -1167,7 +1181,7 @@ function createFilter(filter, keys) {
 module.exports = createFilter;
 
 
-},{"underscore":67}],43:[function(require,module,exports){
+},{"underscore":69}],45:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -1381,7 +1395,7 @@ _.extend(Paginated.prototype, methods, Backbone.Events);
 module.exports =  Paginated;
 
 
-},{"backbone":47,"backbone-collection-proxy":40,"underscore":67}],44:[function(require,module,exports){
+},{"backbone":49,"backbone-collection-proxy":42,"underscore":69}],46:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone =require('backbone');
@@ -1499,7 +1513,7 @@ _.extend(Sorted.prototype, methods, Backbone.Events);
 module.exports = Sorted;
 
 
-},{"./src/reverse-sorted-index.js":45,"backbone":47,"backbone-collection-proxy":40,"underscore":67}],45:[function(require,module,exports){
+},{"./src/reverse-sorted-index.js":47,"backbone":49,"backbone-collection-proxy":42,"underscore":69}],47:[function(require,module,exports){
 
 var _ = require('underscore');
 
@@ -1526,7 +1540,7 @@ function reverseSortedIndex(array, obj, iterator, context) {
 
 module.exports = reverseSortedIndex;
 
-},{"underscore":67}],46:[function(require,module,exports){
+},{"underscore":69}],48:[function(require,module,exports){
 var _ = require('underscore');
 
 function proxyEvents(from, eventNames) {
@@ -1541,7 +1555,7 @@ function proxyEvents(from, eventNames) {
 
 module.exports = proxyEvents;
 
-},{"underscore":67}],47:[function(require,module,exports){
+},{"underscore":69}],49:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3151,7 +3165,7 @@ module.exports = proxyEvents;
 
 }));
 
-},{"underscore":48}],48:[function(require,module,exports){
+},{"underscore":50}],50:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -4496,9 +4510,9 @@ module.exports = proxyEvents;
   }
 }).call(this);
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var Handlebars = require("./handlebars.runtime")["default"];
@@ -4536,7 +4550,7 @@ Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars.runtime":51,"./handlebars/compiler/ast":53,"./handlebars/compiler/base":54,"./handlebars/compiler/compiler":55,"./handlebars/compiler/javascript-compiler":56}],51:[function(require,module,exports){
+},{"./handlebars.runtime":53,"./handlebars/compiler/ast":55,"./handlebars/compiler/base":56,"./handlebars/compiler/compiler":57,"./handlebars/compiler/javascript-compiler":58}],53:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -4569,7 +4583,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":52,"./handlebars/exception":60,"./handlebars/runtime":61,"./handlebars/safe-string":62,"./handlebars/utils":63}],52:[function(require,module,exports){
+},{"./handlebars/base":54,"./handlebars/exception":62,"./handlebars/runtime":63,"./handlebars/safe-string":64,"./handlebars/utils":65}],54:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -4750,7 +4764,7 @@ exports.log = log;var createFrame = function(object) {
   return obj;
 };
 exports.createFrame = createFrame;
-},{"./exception":60,"./utils":63}],53:[function(require,module,exports){
+},{"./exception":62,"./utils":65}],55:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -4978,7 +4992,7 @@ var AST = {
 // Must be exported as an object rather than the root of the module as the jison lexer
 // most modify the object to operate properly.
 exports["default"] = AST;
-},{"../exception":60}],54:[function(require,module,exports){
+},{"../exception":62}],56:[function(require,module,exports){
 "use strict";
 var parser = require("./parser")["default"];
 var AST = require("./ast")["default"];
@@ -4994,7 +5008,7 @@ function parse(input) {
 }
 
 exports.parse = parse;
-},{"./ast":53,"./parser":57}],55:[function(require,module,exports){
+},{"./ast":55,"./parser":59}],57:[function(require,module,exports){
 "use strict";
 var Exception = require("../exception")["default"];
 
@@ -5464,7 +5478,7 @@ exports.precompile = precompile;function compile(input, options, env) {
 }
 
 exports.compile = compile;
-},{"../exception":60}],56:[function(require,module,exports){
+},{"../exception":62}],58:[function(require,module,exports){
 "use strict";
 var COMPILER_REVISION = require("../base").COMPILER_REVISION;
 var REVISION_CHANGES = require("../base").REVISION_CHANGES;
@@ -6407,7 +6421,7 @@ JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
 };
 
 exports["default"] = JavaScriptCompiler;
-},{"../base":52,"../exception":60}],57:[function(require,module,exports){
+},{"../base":54,"../exception":62}],59:[function(require,module,exports){
 "use strict";
 /* jshint ignore:start */
 /* Jison generated parser */
@@ -6898,7 +6912,7 @@ function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Pa
 return new Parser;
 })();exports["default"] = handlebars;
 /* jshint ignore:end */
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 var Visitor = require("./visitor")["default"];
 
@@ -7037,7 +7051,7 @@ PrintVisitor.prototype.content = function(content) {
 PrintVisitor.prototype.comment = function(comment) {
   return this.pad("{{! '" + comment.comment + "' }}");
 };
-},{"./visitor":59}],59:[function(require,module,exports){
+},{"./visitor":61}],61:[function(require,module,exports){
 "use strict";
 function Visitor() {}
 
@@ -7050,7 +7064,7 @@ Visitor.prototype = {
 };
 
 exports["default"] = Visitor;
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -7079,7 +7093,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -7217,7 +7231,7 @@ exports.program = program;function invokePartial(partial, name, context, helpers
 exports.invokePartial = invokePartial;function noop() { return ""; }
 
 exports.noop = noop;
-},{"./base":52,"./exception":60,"./utils":63}],62:[function(require,module,exports){
+},{"./base":54,"./exception":62,"./utils":65}],64:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -7229,7 +7243,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],63:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -7306,7 +7320,7 @@ exports.escapeExpression = escapeExpression;function isEmpty(value) {
 }
 
 exports.isEmpty = isEmpty;
-},{"./safe-string":62}],64:[function(require,module,exports){
+},{"./safe-string":64}],66:[function(require,module,exports){
 // USAGE:
 // var handlebars = require('handlebars');
 
@@ -7333,7 +7347,7 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions[".hbs"] = extension;
 }
 
-},{"../dist/cjs/handlebars":50,"../dist/cjs/handlebars/compiler/printer":58,"../dist/cjs/handlebars/compiler/visitor":59,"fs":49}],65:[function(require,module,exports){
+},{"../dist/cjs/handlebars":52,"../dist/cjs/handlebars/compiler/printer":60,"../dist/cjs/handlebars/compiler/visitor":61,"fs":51}],67:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v1.10.2
  * http://jquery.com/
@@ -17124,7 +17138,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 
 })( window );
 
-},{}],66:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 //! moment.js
 //! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -19526,6 +19540,6 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
     }
 }).call(this);
 
-},{}],67:[function(require,module,exports){
-module.exports=require(48)
-},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38]);
+},{}],69:[function(require,module,exports){
+module.exports=require(50)
+},{}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40]);
