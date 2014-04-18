@@ -132,6 +132,11 @@ var MoviesReader = {
  },
 
  createUser: function(raw) {
+   var username = raw.username;
+   if (_.findWhere(Users, {username: username})) {
+     return Promise.reject(new Error('Username taken.'));
+   }
+
    var userId = Users.length + 1;
    var newUser = {
        id: userId,

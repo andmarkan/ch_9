@@ -50,8 +50,12 @@ server.post('/api/auth/create_user', function(req, res, next) {
     .then(function(user) {
        res.send({id: user.id, username: user.username});
      })
+    .error(function(err) {
+      console.log(err);
+      res.send(403, { error: err.toString() });
+    })
     .catch(function(err) {
-       res.send('500', { error: err });
+      res.send(500, { error: err });
   });
 });
 
