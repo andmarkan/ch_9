@@ -22,6 +22,7 @@ var ModalView = Backbone.View.extend({
 
   initialize: function() {
     _.bindAll(this, 'render', 'closeModal');
+    return Backbone.View.prototype.initialize.call(this);
   }
 
 });

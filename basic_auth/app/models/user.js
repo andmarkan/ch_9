@@ -1,4 +1,5 @@
 var Backbone = require('backbone');
+var _ = require('underscore');
 
 var UserModel = Backbone.Model.extend({
     defaults: {
@@ -8,6 +9,13 @@ var UserModel = Backbone.Model.extend({
 
     urlRoot: '/api/auth/create_user',
 
+    validate: function(attrs) {
+      var errors = this.errors = {};
+      if (!attrs.username) errors.firstname = 'username is required';
+      if (!attrs.email) errors.email = 'email is required';
+      if (!_.isEmpty(errors)) return errors;
+    },
+
     save: function(attrs, options) {
       options || (options = {});
       
@@ -15,7 +23,7 @@ var UserModel = Backbone.Model.extend({
       options.data = JSON.stringify(attrs);
       console.log(options.data);
       
-      Backbone.Model.prototype.save.call(this, attrs, options);
+      return Backbone.Model.prototype.save.call(this, attrs, options);
     }
 });
 

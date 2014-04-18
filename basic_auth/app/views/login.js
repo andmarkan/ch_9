@@ -4,7 +4,7 @@ var Templates = require('templates/compiledTemplates')(Handlebars);
 
 var LoginView = ModalView.extend({
 
-  template: Templates['login'],
+  template: Templates['login']
 
 });
 module.exports = LoginView;
