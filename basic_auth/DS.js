@@ -1,6 +1,5 @@
 // We require the filesystem library first
 var fs = require('fs');
-var fileName = "./movies.json";
 var sha1 = require('sha1');
 var _ = require('underscore');
 
@@ -12,20 +11,12 @@ var Promise = require('bluebird');
 // We need to wrap the methods from the filesystem with:
 Promise.promisifyAll(fs);
 
-var Movies;
-
 // prepare Data
-
+var fileName = "./movies.json";
 var Movies = fs.readFileAsync(fileName, "utf8")
-  .then(function(f) {
-    return JSON.parse(f);
-  })
-  .then(function(movies) {
-    return Promise.resolve(movies);
-  });
+  .then(JSON.parse);
 
 var Users = [];
-
 
 function _mapAttributes(movie) {
   return {
@@ -74,12 +65,11 @@ var MoviesReader = {
 
  showMovie: function(key) {
    return Movies.then(function(movies) {
-     var match = _.find(movies, function(movie) { return sha1(movie.title) == key });
-     if (!match) {
-       throw new Promise.RejectionError("ID not found");
-     } else {
-       return match;
-     }
+
+     // would be DB query
+     var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
+     if (!match) { return new Promise.reject("ID not found"); }
+     return new Promise.resolve(match);
    }) 
    .then(_mapAllAttributes);
  },
@@ -89,18 +79,10 @@ var MoviesReader = {
    var that = this;
    return Movies
      .then(function() {
-       return that.voteExists(id, 0)
-     })
-     .then(function(result) {
+       that.voteExists(id, 0)
        that.addVote(vote, id, voter)
-     })
-     .then(function() {
-        that.computeScore(id)
-      })
-     .then(function(score) {
-        that.updateScore(id, score);
-     })
-     .then(function() {
+       var score = that.computeScore(id)
+       that.updateScore(id, score);
        return that.showMovie(id);
      });
   }, 
@@ -112,13 +94,11 @@ var MoviesReader = {
  addVote: function(vote, key, user) {
    console.log("... add vote for:  ", key);
    Movies.then(function(movies) {
-     var match = _.find(movies, function(movie) { return sha1(movie.title) == key });
+     var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
      if (!match) {
-       throw new Promise.RejectionError("ID not found");
+       return new Promise.reject("ID not found");
      } else {
        match.rating += 1;
-       console.log(match);
-       return match;
      }
    });
  },
@@ -131,12 +111,38 @@ var MoviesReader = {
    console.log("... save score for:  ", key);
  },
 
- createUser: function(raw) {
+ createUser: function(req) {
+   return _checkDuplicates(req)
+     .then(_createUser);
+ },
+
+ checkAuth: function(req) {
+   var cookies = getCookies(req);
+ 
+   var activeUser = _.findWhere(Users, { token: cookies.session });
+   if (!activeUser) {
+     return Promise.reject("No Session")
+   }
+   return Promise.resolve(_returnUser(activeUser));
+ },
+
+ authUser: function(req) {
+   return _matchPasswords(req).then(_generateToken);
+ }
+}
+
+// would require DB access
+function _checkDuplicates(raw) {
    var username = raw.username;
-   if (_.findWhere(Users, {username: username})) {
+   var existingUser = _.findWhere(Users, {username: username});
+   if (existingUser) {
      return Promise.reject(new Error('Username taken.'));
    }
+   return new Promise.resolve(raw);
+}
 
+// would require DB access
+function _createUser(raw) {
    var userId = Users.length + 1;
    var newUser = {
        id: userId,
@@ -145,31 +151,28 @@ var MoviesReader = {
        email: raw.email
      };
    Users.push(newUser);
-   return Promise.resolve(_.pick(newUser, 'username', 'id'));
- },
+   return Promise.resolve(_returnUser(newUser));
+}
 
- checkAuth: function(req) {
-   var cookies = getCookies(req);
- 
-   var activeUser = _.findWhere(Users, { token: cookies.session });
-   if (!activeUser) {
-       throw "No Session"
-   }
-   return Promise.resolve(_.pick(activeUser, 'username', 'id'));
- },
+function _returnUser(newUser) {
+  return _.pick(newUser, 'username', 'id')
+}
 
- authUser: function(req) {
-
+function _matchPasswords(req) {
    var activeUser = _.findWhere(Users, { username: req.query.username });
-
    if (activeUser.id !== null && raw.password === activeUser.password) {
-     var token = sha1(_.now().toString());
-     activeUser.auth = token;
      return Promise.resolve(activeUser);
    } else {
-     return Promise.RejectionError('username not found');
+     return Promise.reject('username not found');
    }
- }
+
+}
+
+// would require DB access
+function _generateToken(activeUser) {
+   var token = sha1(_.now().toString());
+   activeUser.auth = token;
+   return new Promise.resolve(activeUser);
 }
 
 

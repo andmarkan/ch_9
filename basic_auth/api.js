@@ -48,13 +48,15 @@ server.get('/api/genres', function (req, res, next) {
 server.post('/api/auth/create_user', function(req, res, next) {
   DS.createUser(req.body)
     .then(function(user) {
+       console.log("create user ok:  ", user);
        res.send({id: user.id, username: user.username});
      })
     .error(function(err) {
-      console.log(err);
-      res.send(403, { error: err.toString() });
+       console.log(err);
+       res.send(403, err.toString());
     })
     .catch(function(err) {
+      console.log(err);
       res.send(500, { error: err });
   });
 });
