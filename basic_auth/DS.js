@@ -69,7 +69,7 @@ var MoviesReader = {
      // would be DB query
      var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
      if (!match) { return new Promise.reject("ID not found"); }
-     return new Promise.resolve(match);
+     return match;
    }) 
    .then(_mapAllAttributes);
  },
@@ -96,7 +96,7 @@ var MoviesReader = {
    Movies.then(function(movies) {
      var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
      if (!match) {
-       return new Promise.reject("ID not found");
+       return Promise.reject("ID not found");
      } else {
        match.rating += 1;
      }
@@ -117,29 +117,48 @@ var MoviesReader = {
  },
 
  checkAuth: function(req) {
-   var cookies = getCookies(req);
- 
-   var activeUser = _.findWhere(Users, { token: cookies.session });
-   if (!activeUser) {
-     return Promise.reject("No Session")
-   }
-   return Promise.resolve(_returnUser(activeUser));
+   return _lookupUser(req).then(function(activeUser) {
+     if (!activeUser) {
+       return Promise.reject("No Session")
+     }
+     return _returnUser(activeUser);
+   });
  },
 
  authUser: function(req) {
    return _matchPasswords(req).then(_generateToken);
+ },
+
+ clearSession: function(req) {
+   return _lookupUser(req).then(function(activeUser) {
+     if (activeUser) {
+       activeUser.auth = null;
+     }
+     return activeUser;
+   });
  }
+}
+
+function _lookupUser(req) {
+  var cookies = getCookies(req);
+  return Promise.resolve(_.findWhere(Users, { token: cookies.session }));
+}
+
+function _lookupExisting(username) {
+  return Promise.resolve(_.findWhere(Users, {username: username}));
 }
 
 function _checkDuplicates(raw) {
    var username = raw.username;
 
    // would require DB access
-   var existingUser = _.findWhere(Users, {username: username});
-   if (existingUser) {
-     return Promise.reject(new Error('Username taken.'));
-   }
-   return new Promise.resolve(raw);
+   return _lookupExisting(username).then(function(existingUser) {
+
+     if (existingUser) {
+       return Promise.reject(new Error('Username taken.'));
+     }
+     return raw;
+   });
 }
 
 function _createUser(raw) {
@@ -153,7 +172,7 @@ function _createUser(raw) {
 
    // would require DB access
    Users.push(newUser);
-   return Promise.resolve(_returnUser(newUser));
+   return _returnUser(newUser);
 }
 
 function _returnUser(newUser) {
@@ -161,20 +180,20 @@ function _returnUser(newUser) {
 }
 
 function _matchPasswords(req) {
-   var activeUser = _.findWhere(Users, { username: req.query.username });
-   if (activeUser.id !== null && raw.password === activeUser.password) {
-     return Promise.resolve(activeUser);
-   } else {
-     return Promise.reject('username not found');
-   }
-
+  return _lookupExisting(req.body.username).then(function(activeUser) {
+     if (activeUser && req.body.password === activeUser.password) {
+       return activeUser;
+     } else {
+       return Promise.reject(new Error('username not found'));
+     }
+  });
 }
 
 // would require DB access
 function _generateToken(activeUser) {
    var token = sha1(_.now().toString());
    activeUser.auth = token;
-   return new Promise.resolve(activeUser);
+   return activeUser;
 }
 
 

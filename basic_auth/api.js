@@ -79,7 +79,7 @@ server.get('/api/auth/session', function(req, res, next) {
 
 server.post('/api/auth/session', function(req, res, next) {
 
-  if (!req.query.username || !req.query.password) {
+  if (!req.body.username || !req.body.password) {
     res.send(403, {status: 'err',
       error: 'Username and password are two required fields.'
     });
@@ -87,16 +87,27 @@ server.post('/api/auth/session', function(req, res, next) {
   }
 
   var userId;
-  var key = getRand();
-  DS.authUser(raw.query.username, raw.query.password)
+  DS.authUser(req)
     .then(function(activeUser) {
       res.header('Set-Cookie', 'session=' + activeUser.token + '; expires=Thu, 1 Aug 2030 20:00:00 UTC; path=/; HttpOnly');
       res.send({auth: 'OK', id: activeUser.id, username: activeUser.username, email: activeUser.email});
+    })
+    .error(function(err) {
+       console.log(err);
+       res.send(403, { error: err.message });
     })
     .catch(function(err) {
       console.log("/auth/session: %", err);
       res.send(401, {auth: 'NOK'});
     })
+});
+
+server.del('/api/auth/session', function(req, res, next) {
+  console.log("*** logout");
+  DS.clearSession(req)
+  .then(function() {
+    res.send(200, {auth: 'NOK'});
+  });
 });
 
 
