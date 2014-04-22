@@ -19,7 +19,6 @@ var JoinView = ModalView.extend({
     ModalView.prototype.render.call(this);
     this.delegateEvents();
     this.$error = this.$el.find('.error');
-    this.$error.text("aaaaaaaaa");
     return this;
   },
 
@@ -31,31 +30,26 @@ var JoinView = ModalView.extend({
     var email = $('input[name=email]').val();
 
     var that = this;
-    this.user.save({username: username, password: password, email: email}, {
-        success: function(model, response) {
-          console.log(response);
-          that.closeModal();
-        },
-        error: function(model, response) {
-          that.$error.text(response.responseText);
-          console.log(response);
-        }
-      }
-    );
+    this.user.signup({username: username, password: password, email: email});
   },
 
-  renderError: function(err) {
+  renderError: function(err, options) {
     var errors = _.map(_.keys(err.validationError), function(key) {
       return err.validationError[key];
     })
-    console.log(errors);
     this.$error.text(errors);
+  },
+
+  renderThanks: function() {
+    this.$el.find('.join').html('thanks for signup');
   },
 
   initialize: function() {
     this.user = new User();
     this.listenTo(this.user, 'all', function(ev) { console.log(ev) });
     this.listenTo(this.user, 'invalid', this.renderError);
+    this.listenTo(this.user, 'signup:fail', this.renderError);
+    this.listenTo(this.user, 'signup:success', this.renderThanks);
     return ModalView.prototype.initialize.call(this);
   }
 

@@ -16,12 +16,24 @@ var UserModel = Backbone.Model.extend({
       if (!_.isEmpty(errors)) return errors;
     },
 
+    signup: function(attrs) {
+      var that = this;
+      this.save(attrs, {success: function(model, response) {
+          that.trigger('signup:success');
+        },
+        error: function(model, response) {
+          var error = JSON.parse(response.responseText).error;
+          that.validationError = {"username": error};
+          that.trigger('invalid', that);
+        }
+      });
+    },
+
     save: function(attrs, options) {
       options || (options = {});
       
       options.contentType = 'application/json';
       options.data = JSON.stringify(attrs);
-      console.log(options.data);
       
       return Backbone.Model.prototype.save.call(this, attrs, options);
     }

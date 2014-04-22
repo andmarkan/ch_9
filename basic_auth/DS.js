@@ -131,9 +131,10 @@ var MoviesReader = {
  }
 }
 
-// would require DB access
 function _checkDuplicates(raw) {
    var username = raw.username;
+
+   // would require DB access
    var existingUser = _.findWhere(Users, {username: username});
    if (existingUser) {
      return Promise.reject(new Error('Username taken.'));
@@ -141,7 +142,6 @@ function _checkDuplicates(raw) {
    return new Promise.resolve(raw);
 }
 
-// would require DB access
 function _createUser(raw) {
    var userId = Users.length + 1;
    var newUser = {
@@ -149,7 +149,9 @@ function _createUser(raw) {
        username: raw.username,
        password: raw.password,
        email: raw.email
-     };
+   };
+
+   // would require DB access
    Users.push(newUser);
    return Promise.resolve(_returnUser(newUser));
 }

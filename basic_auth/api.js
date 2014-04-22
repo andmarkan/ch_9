@@ -53,7 +53,7 @@ server.post('/api/auth/create_user', function(req, res, next) {
      })
     .error(function(err) {
        console.log(err);
-       res.send(403, err.toString());
+       res.send(403, { error: err.message });
     })
     .catch(function(err) {
       console.log(err);
@@ -80,8 +80,10 @@ server.get('/api/auth/session', function(req, res, next) {
 server.post('/api/auth/session', function(req, res, next) {
 
   if (!req.query.username || !req.query.password) {
-    res.send({status: 'err', error: 'Username and password are two required fields.'});
-    return
+    res.send(403, {status: 'err',
+      error: 'Username and password are two required fields.'
+    });
+    next();
   }
 
   var userId;
