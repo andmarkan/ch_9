@@ -137,7 +137,7 @@ var Session = Backbone.Model.extend({
         url: "/api/auth/session", 
         data: credentials})
       .done(function(data) { 
-         self.user = new User(data); 
+         that.user = new User(data); 
          that.trigger('login:success');
         })
       .fail(function(response) {
@@ -150,10 +150,25 @@ var Session = Backbone.Model.extend({
 
   currentUser: function() {
     // ... retrieve currentUser if authenticated
+    console.log('currentUser: ', this.user);
+    if (this.user && (this.user.get('auth') == 'OK')) {
+      return this.user;
+    } else {
+      return false; 
+    }
   },
   
   logout: function() {
-     // ... delete a session
+    // ... delete a session
+    var that = this;
+    $.ajax({type: 'DELETE', dataType: 'json', 
+      contentType: 'application/json', 
+      url: '/api/auth/session' })
+        .done(function(data) { 
+          that.user.set('auth', 'NOK');
+          that.trigger('logout:success');
+         })
+        .fail();
   }
 
 });
@@ -537,7 +552,6 @@ var JoinView = ModalView.extend({
     this.user = new User();
     this.listenTo(this.user, 'all', function(ev) { console.log(ev) });
     this.listenTo(this.user, 'invalid', this.renderError);
-    this.listenTo(this.user, 'signup:fail', this.renderError);
     this.listenTo(this.user, 'signup:success', this.renderThanks);
     return ModalView.prototype.initialize.call(this);
   }
@@ -668,14 +682,12 @@ var LoginView = ModalView.extend({
 
   login: function(ev) {
     ev.preventDefault();
-    console.log(ev);
     var username = $('input[name=username]').val();
     var password = $('input[name=password]').val();
 
     // ... login action
     var that = this;
-    Session.getInstance().login(username, password);
-    
+    Session.getInstance().login(username, password); 
   },
 
   renderError: function(err, options) {
@@ -689,8 +701,7 @@ var LoginView = ModalView.extend({
     this.session = Session.getInstance();
     this.listenTo(this.session, 'all', function(ev) { console.log(ev) });
     this.listenTo(this.session, 'invalid', this.renderError);
-    // this.listenTo(this.user, 'signup:fail', this.renderError);
-    // this.listenTo(this.user, 'signup:success', this.renderThanks);
+    this.listenTo(this.session, 'login:success', this.closeModal);
     return ModalView.prototype.initialize.call(this);
   }
 
@@ -804,44 +815,53 @@ var Templates = require('templates/compiledTemplates')(Handlebars);
 
 var LoginView = require('views/login');
 var JoinView = require('views/join');
+var Session = require('models/session');
 
 var NavbarView = Backbone.View.extend({
 
   template: Templates['navbar'],
 
   render: function() {
-    this.$el.html(this.template({session: false}));
-    this.$el.delegate('.login', 'click', this.login);
-    this.$el.delegate('.join', 'click', this.join);
+    var session = this.session.currentUser();
+    this.$el.html(this.template({session: session}));
+    if (session) {
+      this.$el.delegate('.logout', 'click', this.logout);
+    } else {
+      this.$el.delegate('.login', 'click', this.login);
+      this.$el.delegate('.join', 'click', this.join);
+    }
     return this;
   },
 
   login: function(ev) {
     ev.preventDefault();
-    console.log('login');
     $('body').append(this.loginView.render().el);
   },
 
   join: function(ev) {
     ev.preventDefault();
-    console.log('join');
     $('body').append(this.joinView.render().el);
   },
 
-  logout: function() {
-
+  logout: function(ev) {
+    ev.preventDefault();
+    this.session.logout();
   },
 
   initialize: function() {
-    _.bindAll(this, 'render', 'login', 'join');
+    _.bindAll(this, 'render', 'login', 'join', 'logout');
     this.loginView = new LoginView();
     this.joinView = new JoinView();
+    this.session = Session.getInstance();
+    this.listenTo(this.session, 'all', function(ev) { console.log(ev) });
+    this.listenTo(this.session, 'login:success', this.render);
+    this.listenTo(this.session, 'logout:success', this.render);
   }
 
 });
 module.exports = NavbarView;
 
-},{"backbone":53,"handlebars":70,"templates/compiledTemplates":18,"underscore":73,"views/join":24,"views/login":26}],31:[function(require,module,exports){
+},{"backbone":53,"handlebars":70,"models/session":14,"templates/compiledTemplates":18,"underscore":73,"views/join":24,"views/login":26}],31:[function(require,module,exports){
 module.exports=require(17)
 },{"backbone":53,"collections/movies":11,"underscore":73,"views/layout":25}],32:[function(require,module,exports){
 module.exports=require(18)
@@ -869,7 +889,7 @@ module.exports=require(28)
 module.exports=require(29)
 },{"backbone":53,"underscore":73,"views/movie":28}],44:[function(require,module,exports){
 module.exports=require(30)
-},{"backbone":53,"handlebars":70,"templates/compiledTemplates":18,"underscore":73,"views/join":24,"views/login":26}],45:[function(require,module,exports){
+},{"backbone":53,"handlebars":70,"models/session":14,"templates/compiledTemplates":18,"underscore":73,"views/join":24,"views/login":26}],45:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');

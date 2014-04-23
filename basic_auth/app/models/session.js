@@ -18,7 +18,7 @@ var Session = Backbone.Model.extend({
         url: "/api/auth/session", 
         data: credentials})
       .done(function(data) { 
-         self.user = new User(data); 
+         that.user = new User(data); 
          that.trigger('login:success');
         })
       .fail(function(response) {
@@ -31,10 +31,25 @@ var Session = Backbone.Model.extend({
 
   currentUser: function() {
     // ... retrieve currentUser if authenticated
+    console.log('currentUser: ', this.user);
+    if (this.user && (this.user.get('auth') == 'OK')) {
+      return this.user;
+    } else {
+      return false; 
+    }
   },
   
   logout: function() {
-     // ... delete a session
+    // ... delete a session
+    var that = this;
+    $.ajax({type: 'DELETE', dataType: 'json', 
+      contentType: 'application/json', 
+      url: '/api/auth/session' })
+        .done(function(data) { 
+          that.user.set('auth', 'NOK');
+          that.trigger('logout:success');
+         })
+        .fail();
   }
 
 });

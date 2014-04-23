@@ -48,7 +48,6 @@ var JoinView = ModalView.extend({
     this.user = new User();
     this.listenTo(this.user, 'all', function(ev) { console.log(ev) });
     this.listenTo(this.user, 'invalid', this.renderError);
-    this.listenTo(this.user, 'signup:fail', this.renderError);
     this.listenTo(this.user, 'signup:success', this.renderThanks);
     return ModalView.prototype.initialize.call(this);
   }
