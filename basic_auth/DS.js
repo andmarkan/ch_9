@@ -1,5 +1,6 @@
 // We require the filesystem library first
 var fs = require('fs');
+var fileName = "./movies.json";
 var sha1 = require('sha1');
 var _ = require('underscore');
 
@@ -11,12 +12,12 @@ var Promise = require('bluebird');
 // We need to wrap the methods from the filesystem with:
 Promise.promisifyAll(fs);
 
+var Movies;
+
 // prepare Data
-var fileName = "./movies.json";
+
 var Movies = fs.readFileAsync(fileName, "utf8")
   .then(JSON.parse);
-
-var Users = [];
 
 function _mapAttributes(movie) {
   return {
@@ -24,12 +25,7 @@ function _mapAttributes(movie) {
     title: movie.title,
     _key: sha1(movie.title),
   };
-};
-
-
-function _mapGenres(movie) { 
-  return movie.genres 
-};
+}
 
 function _mapAllAttributes(movie) {
   return {
@@ -40,126 +36,111 @@ function _mapAllAttributes(movie) {
     genres: movie.genres,
     _key: sha1(movie.title),
   };
-};
+}
+
+function _find(movies, key) {
+  var match = _.find(movies, function(movie) { return movie.id === parseInt(key) });
+  if (!match) {
+    throw new Promise.RejectionError("ID not found");
+  } else {
+    return match;
+  }
+}
+
+function _mapGenres(movies) {
+  return _.chain(movies)
+  .map(function(movie) { 
+    return movie.genres 
+  })
+  .flatten()
+  .uniq()
+  .value();
+}
+
+function _findBySha(movies, key) {
+  var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
+  if (!match) {
+    throw new Promise.RejectionError("ID not found");
+  } else {
+    return match;
+  }
+}
 
 
+var DS = function() {};
 
-// We will later export this to a module
-var MoviesReader = {
-
-  allMovies: function() {
+DS.prototype.allMovies = function() {
     return Movies
-     .map(_mapAttributes)
-  },
+     .map(_mapAttributes);
+}
 
-  allGenres: function() {
-    return Movies
-     .map(_mapGenres)
-     .then(function(genres) {
-       return _.chain(genres)
-        .flatten()
-        .uniq()
-        .value();
-     });
-  },
+DS.prototype.allGenres = function() {
+  return Movies.then(_mapGenres);
+}
 
- showMovie: function(key) {
-   return Movies.then(function(movies) {
-
-     // would be DB query
-     var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
-     if (!match) { return new Promise.reject("ID not found"); }
-     return match;
-   }) 
-   .then(_mapAllAttributes);
- },
-
-
- voteMovie: function(id, vote, voter) {
+DS.prototype.voteMovie = function(id, vote, voter) {
    var that = this;
    return Movies
      .then(function() {
-       that.voteExists(id, 0)
+       return that.voteExists(id, 0)
+     })
+     .then(function(result) {
        that.addVote(vote, id, voter)
-       var score = that.computeScore(id)
-       that.updateScore(id, score);
-       return that.showMovie(id);
+     })
+     .then(function() {
+        that.computeScore(id)
+      })
+     .then(function(score) {
+        that.updateScore(id, score);
+     })
+     .then(function() {
+       return that.findBySha(id);
      });
-  }, 
+  } 
 
- voteExists: function(id, voter) {
+DS.prototype.voteExists = function(id, voter) {
    console.log("... check for duplicates:  ", id);
  },
 
- addVote: function(vote, key, user) {
+DS.prototype.addVote = function(vote, key, user) {
    console.log("... add vote for:  ", key);
    Movies.then(function(movies) {
      var match = _.find(movies, function(movie) { return sha1(movie.title) === key });
      if (!match) {
-       return Promise.reject("ID not found");
+       throw new Promise.RejectionError("ID not found");
      } else {
        match.rating += 1;
+       console.log(match);
+       return match;
      }
    });
- },
+}
 
- computeScore: function(key) {
+DS.prototype.computeScore = function(key) {
    console.log("... compute score for:  ", key);
- },
+}
 
- updateScore: function(key, score) {
+DS.prototype.updateScore = function(key, score) {
    console.log("... save score for:  ", key);
- },
-
- createUser: function(req) {
-   return _checkDuplicates(req)
-     .then(_createUser);
- },
-
- checkAuth: function(req) {
-   return _lookupUser(req).then(function(activeUser) {
-     if (!activeUser) {
-       return Promise.reject("No Session")
-     }
-     return _returnUser(activeUser);
-   });
- },
-
- authUser: function(req) {
-   return _matchPasswords(req).then(_generateToken);
- },
-
- clearSession: function(req) {
-   return _lookupUser(req).then(function(activeUser) {
-     if (activeUser) {
-       activeUser.auth = null;
-     }
-     return activeUser;
-   });
- }
 }
 
-function _lookupUser(req) {
-  var cookies = getCookies(req);
-  return Promise.resolve(_.findWhere(Users, { token: cookies.session }));
+DS.prototype.find = function(key) {
+   return Movies.then(function(movies) {
+     return _find(movies, key);
+   }) 
+   .then(_mapAllAttributes);
 }
 
-function _lookupExisting(username) {
-  return Promise.resolve(_.findWhere(Users, {username: username}));
+DS.prototype.findBySha = function(key) {
+   return Movies.then(function(movies) {
+     return _findBySha(movies, key);
+   }) 
+   .then(_mapAllAttributes);
 }
 
-function _checkDuplicates(raw) {
-   var username = raw.username;
+// DS for users and sessions
 
-   // would require DB access
-   return _lookupExisting(username).then(function(existingUser) {
-
-     if (existingUser) {
-       return Promise.reject(new Error('Username taken.'));
-     }
-     return raw;
-   });
-}
+var Users = [];
 
 function _createUser(raw) {
    var userId = Users.length + 1;
@@ -175,12 +156,42 @@ function _createUser(raw) {
    return _returnUser(newUser);
 }
 
+
+function _findByUsername(username) {
+  var user = _.findWhere(Users, {username: username});
+  return Promise.resolve(user);
+}
+
+
 function _returnUser(newUser) {
+  console.log(newUser);
   return _.pick(newUser, 'username', 'id')
 }
 
+function _checkDuplicates(raw) {
+   var username = raw.username;
+
+   // would require DB access
+   return _findByUsername(username).then(function(existingUser) {
+
+     if (existingUser) {
+       return Promise.reject(new Error('Username taken.'));
+     }
+     return raw;
+   });
+}
+
+DS.prototype.createUser = function(req) {
+  var raw = JSON.parse(req.body);
+ return _checkDuplicates(raw)
+   .then(_createUser);
+}
+
+// data store operations to authenticate a user
 function _matchPasswords(req) {
-  return _lookupExisting(req.body.username).then(function(activeUser) {
+  console.log(req.body.username);
+  return _findByUsername(req.body.username).then(function(activeUser) {
+    console.log(activeUser);
      if (activeUser && req.body.password === activeUser.password) {
        return activeUser;
      } else {
@@ -189,14 +200,44 @@ function _matchPasswords(req) {
   });
 }
 
-// would require DB access
 function _generateToken(activeUser) {
-   var token = sha1(_.now().toString());
-   activeUser.auth = token;
+   var token = sha1(_.now().toString()); // generate a unique token
+   activeUser.token = token;
    return activeUser;
+}
+
+DS.prototype.authUser = function(req) {
+  return _matchPasswords(req).then(_generateToken);
+}
+
+function _findUserByToken(req) {
+  var cookies = getCookies(req);
+  console.log(cookies);
+  var user = _.findWhere(Users, { token: cookies.session });
+  console.log(user);
+  console.log('----');
+  return Promise.resolve(user);
+}
+
+DS.prototype.checkAuth = function(req) {
+  return _findUserByToken(req).then(function(activeUser) {
+    if (!activeUser) {
+      return Promise.reject("No Session")
+    }
+    return _returnUser(activeUser);
+  });
+}
+
+DS.prototype.clearSession = function(req) {
+  return _findUserByToken(req).then(function(activeUser) {
+    if (activeUser) {
+      activeUser.auth = null;
+    }
+    return activeUser;
+  });
 }
 
 
 // Last, we export the MoviesReader as module
-module.exports = MoviesReader;
+module.exports = DS;
 
