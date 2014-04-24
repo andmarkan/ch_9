@@ -73,6 +73,18 @@ header {
   width: 900px;
 }
 
+label {
+  width: 140px;
+  display: inline-block;
+  text-align: left;
+}
+
+.error-active {
+  padding: 4px;
+  border: 1px red solid;
+  margin: 10px;
+}
+
 /* for UI modal */
 .ui-modal {
 	z-index: 99;

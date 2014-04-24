@@ -9,6 +9,7 @@ var ModalView = Backbone.View.extend({
   render: function() {
     this.$el.html(this.template());
     this.$el.delegate('.close', 'click', this.closeModal);
+    this.$error = this.$el.find('.error');
     return this;
   },
 

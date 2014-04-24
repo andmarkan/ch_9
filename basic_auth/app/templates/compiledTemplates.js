@@ -8,7 +8,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"overlay\"></div>\n<div class=\"content\">\n   <span class=\"close\">close</span>\n   <section class=\"join\">\n     <h1>Register</h1>\n     <span class=\"error\"></span>\n     <form>\n     <fieldset>\n     <legend>Username</legend>\n     <label>\n       <input type=\"text\" name=\"username\" />\n      </label>\n     <span data-msg='username'></span>\n     </fieldset>\n     <fieldset>\n     <legend>Email Address</legend>\n     <label>\n     Email:\n     <input type=\"text\" name=\"email\" /> </label>\n     </fieldset>\n     <fieldset>\n     <legend>Password</legend>\n     <label>\n     Password:\n     <input type=\"password\" name=\"password\" /> </label>\n     <br />\n     <label>\n         Password (confirm):\n     <input type=\"password\" name=\"cpassword\" /> </label>\n     </fieldset>\n      <input type=\"submit\"></input>\n   </section>\n</div>\n";
+  return "<div class=\"overlay\"></div>\n<div class=\"content\">\n   <span class=\"close\">close</span>\n   <section class=\"join\">\n     <h1>Register</h1>\n     <div class=\"error\"></div>\n     <form>\n     <label for=\"username\">Username</label>\n     <input type=\"text\" name=\"username\" />\n     <br>\n     <label for=\"email\">Email Address</label>\n     <input type=\"text\" name=\"email\" />\n     <br>\n     <label for=\"password\">Password</label>\n     <input type=\"password\" name=\"password\" />\n     <br>\n     <input type=\"submit\"></input>\n   </section>\n</div>\n";
   });
 
 templates["login"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

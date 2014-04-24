@@ -18,7 +18,6 @@ var JoinView = ModalView.extend({
   render: function() {
     ModalView.prototype.render.call(this);
     this.delegateEvents();
-    this.$error = this.$el.find('.error');
     return this;
   },
 
@@ -38,6 +37,7 @@ var JoinView = ModalView.extend({
       return err.validationError[key];
     })
     this.$error.text(errors);
+    this.$error.addClass('error-active');
   },
 
   renderThanks: function() {

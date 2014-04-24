@@ -182,9 +182,10 @@ function _checkDuplicates(raw) {
 }
 
 DS.prototype.createUser = function(req) {
-  var raw = JSON.parse(req.body);
- return _checkDuplicates(raw)
-   .then(_createUser);
+  // var raw = JSON.parse(req.body);
+  var raw = req.body;
+  return _checkDuplicates(raw)
+    .then(_createUser);
 }
 
 // data store operations to authenticate a user
