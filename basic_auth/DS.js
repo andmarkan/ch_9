@@ -159,7 +159,9 @@ function _createUser(raw) {
 
 function _findByUsername(username) {
   var user = _.findWhere(Users, {username: username});
-  return Promise.resolve(user);
+
+  // _simulate_ a DB operation with time dependency
+  return Promise.delay(30).thenReturn(user);
 }
 
 
@@ -213,11 +215,10 @@ DS.prototype.authUser = function(req) {
 
 function _findUserByToken(req) {
   var cookies = getCookies(req);
-  console.log(cookies);
   var user = _.findWhere(Users, { token: cookies.session });
-  console.log(user);
-  console.log('----');
-  return Promise.resolve(user);
+
+  // _simulate_ a DB operation with time dependency
+  return Promise.delay(30).thenReturn(user);
 }
 
 DS.prototype.checkAuth = function(req) {
