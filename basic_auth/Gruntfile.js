@@ -3,6 +3,34 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    concurrent: {
+      dev: {
+        tasks: ['nodemon:frontend', 'nodemon:api'],
+        options: {
+          logConcurrentOutput: true
+        }
+      }
+    },
+
+    nodemon: {
+      frontend: {
+        script: 'server.js',
+        options: {
+          env: {
+            PORT: '5000'
+          }
+        }
+      },
+      api: {
+        script: 'api.js',
+        options: {
+          env: {
+            PORT: '5001'
+          }
+        }
+      }
+    },
+
     watch: {
       scripts: {
         files: 'app/**/*.js',
@@ -52,39 +80,17 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-concurrent');
+  grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-watch');
-
-  grunt.registerTask('runFrontend', function () {
-    grunt.util.spawn({
-      cmd: 'node',
-      args: ['./node_modules/.bin/nodemon', 'server.js'],
-      opts: {
-        stdio: 'inherit'
-      }
-    }, function () {
-      grunt.fail.fatal(new Error("nodemon quit"));
-    });
-  });
-
-  grunt.registerTask('runAPI', function () {
-    grunt.util.spawn({
-      cmd: 'node',
-      args: ['./node_modules/.bin/nodemon', 'api.js'],
-      opts: {
-        stdio: 'inherit'
-      }
-    }, function () {
-      grunt.fail.fatal(new Error("nodemon quit"));
-    });
-  });
 
 
   grunt.registerTask('compile', ['handlebars', 'browserify']);
 
   // Run the server and watch for file changes
-  grunt.registerTask('server', ['compile', 'runFrontend', 'runAPI', 'watch']);
+  grunt.registerTask('server', ['compile', 'concurrent:dev', 'watch']);
 
   // Default task(s).
   grunt.registerTask('default', ['compile']);
